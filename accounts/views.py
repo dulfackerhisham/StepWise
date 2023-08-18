@@ -136,7 +136,6 @@ def resend_otp(request):
 
 # @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def log_in(request):
-#fi user.is_authenticated
     if request.method == 'POST':
         email = request.POST['email']
         password1 = request.POST['password1']
@@ -144,10 +143,15 @@ def log_in(request):
         user = authenticate(email=email, password=password1)
 
         if user is not None:
-            login(request, user)
-            # username = user.username
-            # messages.success(request, "Logged in successfully")
-            return redirect('home')  #try to pop a successfull message when logged in with username
+            #this is not enough
+            if user.is_superuser:
+                messages.error(request, "Admin Is Not Allowed To Log in User Side")
+                return redirect('logIn')
+            else:
+                login(request, user)
+                # username = user.username
+                # messages.success(request, "Logged in successfully")
+                return redirect('home')  #try to pop a successfull message when logged in with username
         else:
             messages.error(request, "invalid credentials")
             return redirect('logIn')

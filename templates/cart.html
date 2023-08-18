@@ -1,6 +1,31 @@
 {% extends 'index.html' %}
 {% load static %}
 
+
+
+{% block head %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/css/alertify.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/css/themes/default.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/alertify.min.js"></script>
+
+<style>
+
+
+
+    .cart-product-image {
+        max-width: 100px;
+        max-height: 100px;
+        width: auto;
+        height: auto;
+}
+</style>
+
+
+
+{% endblock head %}
+
 	<!-- Start Header Area -->
 	
 	{% block navbar %}
@@ -120,106 +145,56 @@
                                 <th scope="col">Total</th>
                             </tr>
                         </thead>
+                        {% if cart %}
+                        {% for items in cart%}
+
                         <tbody>
                             <tr>
                                 <td>
                                     <div class="media">
                                         <div class="d-flex">
-                                            <img src="img/cart.jpg" alt="">
+                                            <img src="{{ items.product.img.url }}" alt="" class="cart-product-image">
                                         </div>
                                         <div class="media-body">
-                                            <p>Minimalistic shop for multipurpose use</p>
+                                            <p>{{ items.product }}</p>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <h5>$360.00</h5>
+                                    <h5>Rs {{items.product.price}}</h5>
                                 </td>
                                 <td>
-                                    <div class="product_count">
-                                        <input type="text" name="qty" id="sst" maxlength="12" value="1" title="Quantity:"
-                                            class="input-text qty">
-                                        <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++;return false;"
-                                            class="increase items-count" type="button"><i class="lnr lnr-chevron-up"></i></button>
-                                        <!-- <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 0 ) result.value--;return false;"
-                                            class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button> -->
-                                            <button onclick="var result = document.getElementById('sst'); var sst = result.value; if(!isNaN(sst) && sst > 0) { result.value--; } return false;"
-                                                class="reduced items-count" type="button">
-                                            <i class="lnr lnr-chevron-down"></i>
-                                        </button>
+                                    <div class="product_count product_data">
+                                        <input type="hidden" class="product-id" value="{{ items.product.id}}">
+                                        <input type="hidden" class="max-stock" value="{{ items.product.stock }}">
+
+                                        {% csrf_token %}
+                                        <input type="text" name="qty" id="sst_{{ items.product.id }}" maxlength="12" value="{{ items.qty }}" title="Quantity:" class="input-text qty">
+
+
+                                        <button class="increase increment-btn changeQuantity" type="button"><i class="lnr lnr-chevron-up"></i></button>
+                                        <button class="reduced decrement-btn changeQuantity" type="button"><i class="lnr lnr-chevron-down"></i></button>
                                         
                                     </div>
                                 </td>
                                 <td>
-                                    <h5>$720.00</h5>
+                                {% if items.qty > 1 %}
+                                    Rs {{ items.total_price }}
+                                {% else %}
+                                    Rs {{ items.product.price }}
+                                {% endif %}
                                 </td>
+                                <td>
+                                    <div>
+                                        <button class="btn btn-danger delete-cart"> <i class="fa fa-trash"> Remove</i></button>
+                                    </div>
+                                </td>
+
                             </tr>
+                            {% endfor %}
                             <tr>
-                                <td>
-                                    <div class="media">
-                                        <div class="d-flex">
-                                            <img src="img/cart.jpg" alt="">
-                                        </div>
-                                        <div class="media-body">
-                                            <p>Minimalistic shop for multipurpose use</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <h5>$360.00</h5>
-                                </td>
-                                <td>
-                                    <div class="product_count">
-                                        <input type="text" name="qty" id="sst" maxlength="12" value="1" title="Quantity:"
-                                            class="input-text qty">
-                                        <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++;return false;"
-                                            class="increase items-count" type="button"><i class="lnr lnr-chevron-up"></i></button>
-                                        <!-- <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 0 ) result.value--;return false;"
-                                            class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button> -->
-                                            <button onclick="var result = document.getElementById('sst'); var sst = result.value; if(!isNaN(sst) && sst > 0) { result.value--; } return false;"
-                                                class="reduced items-count" type="button">
-                                            <i class="lnr lnr-chevron-down"></i>
-                                        </button>
-                                        
-                                    </div>
-                                </td>
-                                <td>
-                                    <h5>$720.00</h5>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="media">
-                                        <div class="d-flex">
-                                            <img src="img/cart.jpg" alt="">
-                                        </div>
-                                        <div class="media-body">
-                                            <p>Minimalistic shop for multipurpose use</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <h5>$360.00</h5>
-                                </td>
-                                <td>
-                                    <div class="product_count">
-                                        <input type="text" name="qty" id="sst" maxlength="12" value="1" title="Quantity:"
-                                            class="input-text qty">
-                                        <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++;return false;"
-                                            class="increase items-count" type="button"><i class="lnr lnr-chevron-up"></i></button>
-                                        <!-- <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 0 ) result.value--;return false;"
-                                            class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button> -->
-                                            <button onclick="var result = document.getElementById('sst'); var sst = result.value; if(!isNaN(sst) && sst > 0) { result.value--; } return false;"
-                                                class="reduced items-count" type="button">
-                                            <i class="lnr lnr-chevron-down"></i>
-                                        </button>
-                                        
-                                    </div>
-                                </td>
-                                <td>
-                                    <h5>$720.00</h5>
-                                </td>
-                            </tr>
+                        
+                   
                             <tr class="bottom_button">
                                 <td>
                                     <a class="gray_btn" href="#">Update Cart</a>
@@ -252,13 +227,16 @@
                                     <h5>$2160.00</h5>
                                 </td>
                             </tr>
+                            
+                        {% else %}
+                            <h4>Your Cart is Empty</h4>
+                        {% endif %}
+
                             <tr class="shipping_area">
                                 <td>
 
                                 </td>
                                 <td>
-
-                                </td>
                                 <td>
                                     <h5>Shipping</h5>
                                 </td>
@@ -312,3 +290,11 @@
     <!--================End Cart Area =================-->
 
 	{% endblock main %}
+
+
+    
+{% block script %}
+
+<script src="{% static 'js/function.js' %}"></script>
+
+{% endblock script %}

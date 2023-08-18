@@ -141,7 +141,7 @@
 									<h1>{{last_added_product.brand_id.brand_name}} New <br>Collection!</h1>
 									<p>{{last_added_product.product_id.description}}</p>
 									<div class="add-bag d-flex align-items-center">
-										<a class="add-btn" href="{% url 'cart' %}"><span class="lnr lnr-cross"></span></a>
+										<a class="add-btn" href="{% url 'add_to_cart' %}"><span class="lnr lnr-cross"></span></a>
 										<span class="add-text text-uppercase">Add to Bag</span>
 									</div>
 								</div>
@@ -284,7 +284,7 @@
 								</div>
 								<div class="prd-bottom">
 
-									<a href="{% url 'cart' %}" class="social-info">
+									<a href="{% url 'add_to_cart' %}" class="social-info">
 										<span class="ti-bag"></span>
 										<p class="hover-text">add to bag</p>
 									</a>

@@ -4,6 +4,10 @@
 {% block head %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/css/alertify.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/css/themes/default.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/alertify.min.js"></script>
+
 <style>
 	.product--size {
 		margin: 20px 0;
@@ -86,7 +90,7 @@
 						</li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
-						<li class="nav-item nav-link"><a href="#" class="cart"><span class="ti-bag"></span></a></li>
+						<li class="nav-item nav-link"><a href="{% url 'cart' %}" class="cart"><span class="ti-bag"></span></a></li>
 						<li class="nav-item nav-link">
 							<button class="search "><span class="lnr lnr-magnifier" id="search"></span></button>
 						</li>
@@ -148,7 +152,7 @@
 <!--================Single Product Area =================-->
 <div class="product_image_area">
 	<div class="container">
-		<div class="row s_product_inner">
+		<div class="row s_product_inner product_data">
 			<div class="col-lg-6">
 				<div class="s_Product_carousel">
 
@@ -194,21 +198,19 @@
 						<span id="shoesize">{{sz.size_value}}</span>
 						{% endfor %}
 					</div>
-					<div class="product_count">
+					<div class="product_count product_data">
+						{% csrf_token %}
+						<input type="hidden" value="{{ products.id }}" class="product-id" name="" id="">
+						<!-- <input type="hidden" value="{{ products.product_id.title }}" class="product-title" name="" id=""> -->
 						<label for="qty">Quantity:</label>
 						<input type="text" name="qty" id="sst" maxlength="12" value="1" title="Quantity:"
 							class="input-text qty">
-						<button
-							onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++;return false;"
-							class="increase items-count" type="button"><i class="lnr lnr-chevron-up"></i></button>
-						<button
-							onclick="var result = document.getElementById('sst'); var sst = result.value; if (!isNaN(sst) && sst > 0) result.value--; return false;"
-							class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button>
-
+							<button class="increase increment-btn" type="button"><i class="lnr lnr-chevron-up"></i></button>
+							<button class="reduced decrement-btn" type="button"><i class="lnr lnr-chevron-down"></i></button>
+					
 					</div>
 					<div class="card_area d-flex align-items-center">
-						<input type="hidden" value="{{ products.id }}" class="product-id" name="" id="">
-						<input type="hidden" value="{{ products.product_id.title }}" class="product-title" name="" id="">
+
 						<!-- <a class="primary-btn" href="" id="add-to-cart-btn">Add to Cart</a> -->
 						<button type="submit" id="add-to-cart-btn" class="primary-btn" style="border: none;">Add to Cart</button>
 						<!-- <a class="icon_btn" href="#"><i class="lnr lnr lnr-diamond"></i></a> -->
