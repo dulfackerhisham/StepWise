@@ -3,22 +3,16 @@ from django.shortcuts import get_object_or_404, render,redirect
 
 from . models import Cart
 from products.models import ProductItem
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
 def addtocart(request):
-    # cart_product = {}
-
-    # #current product id
-    # cart_product[str(request.GET['id'])] = {
-    #     'title': request.GET['title'],
-    #     'qty': request.GET['qty'],
-    #     'price': request.GET['price']
-    # }
-
     if request.method == 'POST':
         if request.user.is_authenticated:
             prod_id = int(request.POST.get('id'))
+
+            print(prod_id)
 
             # Get the ProductItem instance or return 404 if not found
             product_item = get_object_or_404(ProductItem, id=prod_id)
@@ -39,6 +33,7 @@ def addtocart(request):
                         return JsonResponse({'status': "Product Added Successfully"})
                     else:
                         return JsonResponse({'status': "Only" +str(product_check.stock) + " Quantity Available"})
+                        
 
             else:
                 return JsonResponse({'status': "No such product found"})
@@ -49,14 +44,18 @@ def addtocart(request):
 
     # return render(request, "cart.html")
 
-
+@login_required(login_url='logIn')
 def viewcart(request):
     cart = Cart.objects.filter(user=request.user.id).order_by('-createdDate')
 
+    subtotal = 0
     for item in cart:
         item.total_price = item.product.price * item.qty
+        subtotal += item.total_price
 
-    context = {'cart': cart}
+    context = {'cart': cart,
+               'subtotal': subtotal,
+               }
 
     return render(request, "cart.html", context)
 
@@ -75,11 +74,30 @@ def updatecart(request):
                 print(prod_qty)
                 cart.qty = prod_qty
                 cart.save()
-                #here delete a quantity based on adding the quantity
-                return JsonResponse({'status': "Updated Successfully"})
+
+                 # Calculate the new total price
+                new_total_price = cart.product.price * cart.qty
+
+                # Recalculate the subtotal
+                subtotal = 0
+                cart_items = Cart.objects.filter(user=request.user.id)
+                for item in cart_items:
+                    item.total_price = item.product.price * item.qty
+                    subtotal += item.total_price
+                return JsonResponse({'status': "Updated Successfully", 'new_total_price': new_total_price, 'subtotal': subtotal})
         else:
             return JsonResponse({'status': "Product not found in cart"})
 
     return redirect('/')
 
 
+def deletecart(request):
+    if request.method == 'POST':
+        prod_id = int(request.POST.get('id'))
+        if(Cart.objects.filter(user=request.user, product=prod_id)).exists():
+            cart = Cart.objects.get(product=prod_id, user=request.user)
+            cart.delete()
+            return JsonResponse({'status': "Product Removed From Cart"})
+        else:
+            return JsonResponse({'status': "Product not Removed From Cart"})
+    return redirect('/')

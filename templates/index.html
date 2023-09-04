@@ -74,7 +74,7 @@
 								</ul> -->
 							<!-- </li> -->
 							<li class="nav-item">
-								<a href="#" class="nav-link">Wishlist</a>
+								<a href="{% url 'wishlist' %}" class="nav-link">Wishlist</a>
 								<!-- <ul class="dropdown-menu">
 									<li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
 									<li class="nav-item"><a class="nav-link" href="tracking.html">Tracking</a></li>
@@ -274,7 +274,7 @@
 					{% for p in products %}
 					<div class="col-lg-3 col-md-6">
 						<div class="single-product">
-							<a href="{% url 'productDetail' p.id %}"><img class="img-fluid" style="width: 200px; height: 110px; margin-top: 10px;" src="{{p.img.url}}" alt=""></a>
+							<a href="{% url 'productDetail' p.slug %}"><img class="img-fluid" style="width: 200px; height: 110px; margin-top: 10px;" src="{{p.img.url}}" alt=""></a>
 							<div class="product-details">
 								<h5>{{p.brand_id.brand_name}}</h5>
 								<h6>{{ p.product_id.title }}</h6>

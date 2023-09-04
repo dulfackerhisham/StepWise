@@ -75,7 +75,7 @@ class Brand(models.Model):
 #         return self.gender_value
 
 class ProductItem(models.Model):
-    product_id      = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product_id      = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="product_item")
     category_id     = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     size_id         = models.ForeignKey(Size, on_delete=models.SET_NULL, null=True)
     color_id        = models.ForeignKey(Color, on_delete=models.SET_NULL, null=True)

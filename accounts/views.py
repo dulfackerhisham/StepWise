@@ -8,6 +8,12 @@ from django.conf import settings
 import random
 from django.core.cache import cache
 from django.core.mail import send_mail
+from .helper import send_forgot_passwrod_mail
+# import uuid
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.urls import reverse
+import hashlib
+
 
 # from django.views.decorators.cache import cache_control
 
@@ -15,6 +21,11 @@ from django.core.mail import send_mail
 
 # Create your views here.
 def sign_up(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+
+
+
     if request.method == 'POST':
         # username = requset.POST.get('username')
         username  = request.POST['username']
@@ -55,7 +66,8 @@ def sign_up(request):
             else:
                 #generating otp & saves in session
                 random_otp = str(random.randint(0000, 9999))
-                cache.set('generated_otp', random_otp, 30)
+                key = hashlib.sha3_256(email.encode()).hexdigest()
+                cache.set(key, random_otp, 30)
                 print(random_otp)
                 #sending email
                 subject = "Welcome to StepWise !!!"
@@ -65,7 +77,7 @@ def sign_up(request):
         
                 to_list = [email]
                 send_mail(subject, message, settings.EMAIL_HOST_USER, to_list, fail_silently=False)
-                return redirect('otp_verification')
+                return redirect('otp_verification', key)
         else:
             messages.error(request, "Password is not matching!")
             return render(request, "signup.html")
@@ -79,11 +91,10 @@ def sign_up(request):
     return render(request, "signup.html")
 
 
-def otp_verification(request):
-
+def otp_verification(request, key):
     if request.method == 'POST':
         submitted_otp = request.POST.get('submitted_otp')
-        generated_otp = cache.get('generated_otp')
+        generated_otp = cache.get(key)
         print(submitted_otp)
 
         if submitted_otp == generated_otp:
@@ -97,6 +108,7 @@ def otp_verification(request):
 
             # Clear the cache after successful verification
             cache.delete('generated_otp')
+            request.session.flush()
 
             messages.success(request, "Your account has been successfully created.")
             return redirect('logIn')
@@ -136,6 +148,9 @@ def resend_otp(request):
 
 # @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def log_in(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+        
     if request.method == 'POST':
         email = request.POST['email']
         password1 = request.POST['password1']
@@ -143,7 +158,6 @@ def log_in(request):
         user = authenticate(email=email, password=password1)
 
         if user is not None:
-            #this is not enough
             if user.is_superuser:
                 messages.error(request, "Admin Is Not Allowed To Log in User Side")
                 return redirect('logIn')
@@ -164,3 +178,70 @@ def log_out(request):
     logout(request)
     messages.success(request, "Logged out successfully")
     return redirect('logIn')
+
+
+
+def forgot_password(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+
+        if Account.objects.filter(email=email).exists():
+            user = Account.objects.get(email=email)
+            encrypt_id = urlsafe_base64_encode(str(user.id).encode())
+            
+            reset_link = f"{request.scheme}://{request.get_host()}{reverse('changepassword', args=[encrypt_id])}"
+
+            #store the token in cache
+            cache_key = f'password_reset_{encrypt_id}'
+            cache.set(cache_key, {'reset_link': reset_link}, timeout=60)
+
+            #sending email
+            send_forgot_passwrod_mail(email, reset_link)
+            messages.error(request, f"An email is sent to {email}. Please verify it.")
+            return redirect('forgotpassword')
+        else:
+            messages.error(request, "Email doesn't exist")
+            return redirect('forgotpassword')
+    
+    return render(request, "forgotPassword.html")
+
+
+
+def change_password(request, encrypt_id):
+    #getting cache key and token
+    cache_key = f'password_reset_{encrypt_id}'
+    cached_data = cache.get(cache_key)
+
+    if not cached_data:
+            messages.error(request, "Expired token. Please request a new password reset.")
+            return redirect('forgotpassword')
+    
+    if request.method == 'POST':
+        new_password = request.POST['newPass']
+        confirm_password = request.POST['confirmPass']
+
+        if new_password == confirm_password:
+             # Extract the user ID from the cached token
+             id = str(urlsafe_base64_decode(encrypt_id), 'utf-8')
+             id = int(id)
+
+             try:
+                 user = Account.objects.get(id=id)
+                 user.set_password(new_password)
+                 user.save()
+
+                 cache.delete(cache_key)
+
+                 messages.success(request, "Password has been changed successfully. You can now log in with your new password.")
+                 return redirect('logIn')
+             
+             except Account.DoesNotExist:
+                messages.success(request, "Invalid user, Please try again later")
+                return redirect('changepassword', encrypt_id=encrypt_id)
+        
+        else:
+            messages.error(request, "Passwords do not match. Please try again.")
+            return redirect('change-password', encrypt_id=encrypt_id)
+
+        
+    return render(request, "changePassword.html")

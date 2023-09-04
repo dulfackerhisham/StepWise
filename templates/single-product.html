@@ -81,7 +81,7 @@
 									</ul> -->
 						<!-- </li> -->
 						<li class="nav-item">
-							<a href="#" class="nav-link">Wishlist</a>
+							<a href="{% url 'wishlist' %}" class="nav-link">Wishlist</a>
 							<!-- <ul class="dropdown-menu">
 										<li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
 										<li class="nav-item"><a class="nav-link" href="tracking.html">Tracking</a></li>
@@ -137,8 +137,8 @@
 	<div class="container">
 		<div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
 			<div class="col-first">
-				<h1>{{products.brand_id.brand_name}}</h1>
-				<h1>{{products.category_id.name}}</h1>
+				<h1>{{product.brand_id.brand_name}}</h1>
+				<h1>{{product.category_id.name}}</h1>
 				<nav class="d-flex align-items-center">
 					<a href="{% url 'home' %}">Home<span class="lnr lnr-arrow-right"></span></a>
 					<a href="{% url 'productList' %}">Shop<span class="lnr lnr-arrow-right"></span></a>
@@ -163,9 +163,9 @@
 					</div> -->
 					<div class="single-prd-item" id="img-container">
 						<div id="lens"></div>
-						<img class="img-fluid" id="featured-img" src="{{products.img.url}}" alt="">
+						<img class="img-fluid" id="featured-img" src="{{product.img.url}}" alt="">
 					</div>
-					{% for p_img in p_image %}
+					{% for p_img in product.p_images.all %}
 					<div class="single-prd-item">
 						<div id="lens"></div>
 						<img class="img-fluid" src="{{p_img.image.url }}" alt="">
@@ -178,29 +178,54 @@
 			</div>
 			<div class="col-lg-5 offset-lg-1">
 				<div class="s_product_text">
-					<h3>{{products.brand_id.brand_name}}</h3>
-					<h3>{{products.product_id.title}}</h3>
-					<h2 class="product-price">Rs {{ products.price }}</h2>
+					<h3>{{product.brand_id.brand_name}}</h3>
+					<h3>{{product.product_id.title}}</h3>
 					<ul class="list">
-						<li><a class="active" href="#"><span>Category</span> : {{products.category_id.name}}</a></li>
-						<li><a class="active" href="#"><span>Gender</span> : {{products.get_gender_display}}</a></li>
-						{% if products.stock %}
+						<li><a class="active" href="#"><span>Category</span> : {{product.category_id.name}}</a></li>
+						<li><a class="active" href="#"><span>Gender</span> : {{product.get_gender_display}}</a></li>
+						{% if product.stock %}
 						<li><a class="active" href="#"><span>Availibility</span> : In Stock</a></li>
 						{% else %}
 						<li><a class="active" href="#"><span>Availibility</span> : Not In Stock</a></li>
 						{% endif %}
 					</ul>
-					<p></p>
-					<div class="product--size">
-						<span class="active">Size </span>
+
+
+					<hr>
+					<span class="">Color: {{product.color_id}} </span>
+					<hr>
+					
+						<span class="">Size </span>
+
+					<div class="row ps-2">
 						<br>
-						{% for sz in sizes %}
-						<span id="shoesize">{{sz.size_value}}</span>
+						{% for p in product.product_id.product_item.all %}
+						<div class="col-1 m-1 p-0 bg-secondary-subtle rounded-1 border border-2 {% if p == product %} border-warning {% endif %}">
+						  <a href="{% url 'productDetail' p.slug %}" data-bs-title="{{ p.color_id }}">
+							{{p.size_id}}
+						  </a>
+						</div>
 						{% endfor %}
+					  </div>
+						<hr>
+
+
+
+
+					<div>
+						<span>Price</span>
+					<h2 class="product-price">Rs {{ product.price }}</h2>
+					<hr>
+
 					</div>
+
+
+
 					<div class="product_count product_data">
 						{% csrf_token %}
-						<input type="hidden" value="{{ products.id }}" class="product-id" name="" id="">
+						<input type="hidden" value="{{ product.id }}" class="product-id">
+						<input type="hidden" class="max-stock" value="{{ product.stock }}">
+
 						<!-- <input type="hidden" value="{{ products.product_id.title }}" class="product-title" name="" id=""> -->
 						<label for="qty">Quantity:</label>
 						<input type="text" name="qty" id="sst" maxlength="12" value="1" title="Quantity:"
@@ -210,11 +235,12 @@
 					
 					</div>
 					<div class="card_area d-flex align-items-center">
+						<br>
 
 						<!-- <a class="primary-btn" href="" id="add-to-cart-btn">Add to Cart</a> -->
-						<button type="submit" id="add-to-cart-btn" class="primary-btn" style="border: none;">Add to Cart</button>
+						<button type="submit" class="primary-btn add-to-cart-btn" style="border: none;">Add to Cart</button>
 						<!-- <a class="icon_btn" href="#"><i class="lnr lnr lnr-diamond"></i></a> -->
-						<a class="icon_btn" href="#"><i class="lnr lnr lnr-heart"></i></a>
+						<a class="icon_btn add-to-wishlist" href="#"><i class="lnr lnr lnr-heart "></i></a>
 					</div>
 				</div>
 			</div>
@@ -244,7 +270,7 @@
 		</ul>
 		<div class="tab-content" id="myTabContent">
 			<div class="tab-pane fade" id="home" role="tabpanel" aria-labelledby="home-tab">
-				<p>{{products.product_id.description}}</p>
+				<p>{{product.product_id.description}}</p>
 			</div>
 			<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
 				<div class="table-responsive">
@@ -255,7 +281,7 @@
 									<h5>Color</h5>
 								</td>
 								<td>
-									<h5>{{products.color_id.color_value}}</h5>
+									<h5>{{product.color_id.color_value}}</h5>
 								</td>
 							</tr>
 							<tr>
@@ -263,7 +289,7 @@
 									<h5>Size</h5>
 								</td>
 								<td>
-									<h5>{{products.size_id.size_value}}</h5>
+									<h5>{{product.size_id.size_value}}</h5>
 								</td>
 							</tr>
 

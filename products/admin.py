@@ -8,17 +8,17 @@ class ProductGalleryAdmin(admin.TabularInline):
 
 class ProductItemAdmin(admin.ModelAdmin):
     inlines = [ProductGalleryAdmin]
-    list_display = ['product_id', 'category_id', 'gender', 'price']
+    list_display = ['product_id', 'category_id', 'gender', 'size_id', 'color_id', 'price']
     readonly_fields = ['createdDate', 'modifiedDate', 'slug']
 
-    def delete_model(self, request, obj):
-        # Check if there are related images in the ProductItemGallery
-        if obj.productitemgallery_set.exists():
-        # If there are images, delete only the images and not the entire ProductItem
-            obj.productitemgallery_set.all().delete()
-        else:
-        # If there are no images, delete the entire ProductItem
-            obj.delete()
+    # def delete_model(self, request, obj):
+    #     # Check if there are related images in the ProductItemGallery
+    #     if obj.productitemgallery_set.exists():
+    #     # If there are images, delete only the images and not the entire ProductItem
+    #         obj.productitemgallery_set.all().delete()
+    #     else:
+    #     # If there are no images, delete the entire ProductItem
+    #         obj.delete()
 
 admin.site.register(Product)
 admin.site.register(Category)
