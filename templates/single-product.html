@@ -3,40 +3,14 @@
 
 {% block head %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="{% static 'css/magnify.css' %}">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/css/alertify.min.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/css/themes/default.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/alertify.min.js"></script>
 
-<style>
-	.product--size {
-		margin: 20px 0;
-
-	}
-
-	#shoesize {
-		display: inline-block;
-		width: 35px;
-		border: 1px solid #999;
-		border-radius: 4px 4px;
-		text-align: center;
-		padding: 1px 2px;
-		text-transform: uppercase;
-		cursor: pointer;
-
-	}
-
-	#shoesize.active {
-		color: #fff;
-		background: #008080;
-	}
-
-	#lens {
-		height: 125px;
-		width: 125px;
-		border: 2px solid black;
-	}
-</style>
 {% endblock head %}
 
 
@@ -162,13 +136,14 @@
 						<img class="img-fluid" id="featured-img" src="{% static 'img/i1.jpg' %}" alt="">
 					</div> -->
 					<div class="single-prd-item" id="img-container">
-						<div id="lens"></div>
-						<img class="img-fluid" id="featured-img" src="{{product.img.url}}" alt="">
+						<div></div>
+						<img src="{{product.img.url}}" id="featured-img" class="zoom" data-magnify-src="{{product.img.url}}">
+
 					</div>
 					{% for p_img in product.p_images.all %}
 					<div class="single-prd-item">
-						<div id="lens"></div>
-						<img class="img-fluid" src="{{p_img.image.url }}" alt="">
+						<div></div>
+						<img src="{{p_img.image.url }}"  class="zoom" data-magnify-src="{{p_img.image.url }}">
 					</div>
 					{% endfor %}
 
@@ -463,7 +438,14 @@
 
 
 <script src="{% static 'js/img_zoom.js' %}"></script>
+<script src="{% static 'js/jquery.magnify.js' %}"></script>
 
 <script src="{% static 'js/function.js' %}"></script>
+
+<script>
+	$(document).ready(function() {
+	  $('.zoom').magnify();
+	});
+</script>
 
 {% endblock script %}

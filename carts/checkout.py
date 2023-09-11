@@ -4,7 +4,7 @@ from . models import Cart
 
 
 
-
+@login_required(login_url='logIn')
 def checkout_view(request):
     subtotal = 0
 

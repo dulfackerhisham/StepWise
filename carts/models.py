@@ -11,4 +11,3 @@ class Cart(models.Model):
     product = models.ForeignKey(ProductItem, on_delete=models.CASCADE)
     qty  = models.PositiveIntegerField()
     createdDate = models.DateTimeField(auto_now_add=True)
-    is_paid = models.BooleanField(default=False)

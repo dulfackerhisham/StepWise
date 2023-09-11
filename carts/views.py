@@ -29,7 +29,7 @@ def addtocart(request):
 
                     #reverse the logic
                     if product_check.stock >= prod_qty:
-                        Cart.objects.create(user=request.user, product=product_item, qty=prod_qty, is_paid=False)
+                        Cart.objects.create(user=request.user, product=product_item, qty=prod_qty)
                         return JsonResponse({'status': "Product Added Successfully"})
                     else:
                         return JsonResponse({'status': "Only" +str(product_check.stock) + " Quantity Available"})

@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import sign_up, log_in, log_out, otp_verification , resend_otp, forgot_password, change_password
+from . profile import user_profile
 
 urlpatterns = [
     path('', log_in, name="logIn"),
@@ -9,4 +10,5 @@ urlpatterns = [
     path('logout/', log_out, name="logout"),
     path('forgot-password/', forgot_password, name="forgotpassword"),
     path('change-password/<str:encrypt_id>/', change_password, name="changepassword"),
+    path('user-profile/', user_profile, name="user_profile"),
 ]

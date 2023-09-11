@@ -12,6 +12,6 @@ class RestrictAdminUserInFrontendMiddleware:
             and request.user.is_superuser
         ):
             logout(request)
-            return redirect("logIn")  # Redirect to the login page
+            return redirect("/")  # Redirect to the login page
         response = self.get_response(request)
         return response

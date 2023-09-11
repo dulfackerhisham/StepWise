@@ -61,3 +61,24 @@ class Account(AbstractBaseUser, PermissionsMixin):
 
     def has_module_perms(self, app_label):
         return True
+
+
+#address table
+class Profile(models.Model):
+    user = models.ForeignKey(Account, on_delete=models.CASCADE)
+    fname = models.CharField(max_length=150, null=False, default='fname')
+    lname = models.CharField(max_length=150, null=False, default='lname')
+    phone = models.BigIntegerField(null=False, default='99999999')
+    email = models.EmailField(max_length=150, null=False, default='example@gmail.com')
+    address = models.TextField(null=False)
+    city = models.CharField(max_length=150, null=False)
+    state = models.CharField(max_length=150, null=False)
+    pincode = models.PositiveIntegerField(null=False, default=000000)
+    country = models.CharField(max_length=150, null=False)
+
+    class Meta:
+        db_table = 'Address'
+
+    def __str__(self):
+        return self.user.username
+    
