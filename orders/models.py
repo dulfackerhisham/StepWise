@@ -24,15 +24,28 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+
     def __str__(self):
         return f"{self.id} {self.tracking_no}"
+    
+    def save(self, *args, **kwargs):
+        """
+        calculating the total_price of all product with the quantity respectively from cart model
+        """
+        total_price = 0
+        for cart_item in self.user.cart_set.all():
+            total_price += cart_item.product.price * cart_item.qty
+
+        self.total_price = total_price
+        super(Order, self).save(*args, **kwargs)
+    
+    
 
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product = models.ForeignKey(ProductItem, on_delete=models.CASCADE)
     price = models.IntegerField(null=False)
-    total_amount = models.PositiveIntegerField(null=False, default=1111)
     quantity = models.PositiveIntegerField(null=False)
 
     def __str__(self):

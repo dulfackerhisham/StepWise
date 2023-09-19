@@ -32,7 +32,7 @@ def addtocart(request):
                         Cart.objects.create(user=request.user, product=product_item, qty=prod_qty)
                         return JsonResponse({'status': "Product Added Successfully"})
                     else:
-                        return JsonResponse({'status': "Only" +str(product_check.stock) + " Quantity Available"})
+                        return JsonResponse({'status': "Product Out Of Stock "})
                         
 
             else:
@@ -69,7 +69,7 @@ def updatecart(request):
             p_stock = cart.product.stock
             
             if p_stock < prod_qty:
-                return JsonResponse({'status': "Product Only Have " + str(p_stock) + " Stocks"}) #cant see the error
+                return JsonResponse({'status': "Product Have " + str(p_stock) + " Stocks"}) #cant see the error
             else:
                 print(prod_qty)
                 cart.qty = prod_qty

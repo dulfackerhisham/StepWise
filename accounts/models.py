@@ -75,6 +75,7 @@ class Profile(models.Model):
     state = models.CharField(max_length=150, null=False)
     pincode = models.PositiveIntegerField(null=False, default=000000)
     country = models.CharField(max_length=150, null=False)
+    status = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'Address'

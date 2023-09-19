@@ -232,10 +232,37 @@ $(document).on('click', '.delete-cart', function (e) {
     // Initial call to attach event listeners
     attachDeleteEventListeners();
 
-    // Your other JavaScript code here...
+
+    // Making Default Address
+    $(document).on("click", ".make-dafault-address", function(){
+        let id = $(this).attr("data-address-id")
+        let this_val = $(this)
+
+        console.log("ID is", id);
+        console.log("Element is:", this_val);
+
+        $.ajax({
+            url: "/login/make-default-address/",
+            data: {
+                "id":id,
+            },
+            dataType: "json",
+            success: function(response){
+                console.log("Address Make Default");
+                if (response.boolean == true){
+
+                    $(".check").hide()
+                    $(".action_btn").show()
+
+                    $(".check"+id).show()
+                    $(".button"+id).hide()
+
+
+                }
+            }
+
+        })
+    })
+
     
-    // Your other AJAX functions, event listeners, and code...
-
-    // Another AJAX functionality
-
 });

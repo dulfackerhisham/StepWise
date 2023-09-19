@@ -1,5 +1,6 @@
 {% extends 'index.html' %}
-{% load static %}
+{% load static i18n %}
+
 
 
 {% block head %}
@@ -76,7 +77,7 @@
 								<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
 								 aria-expanded="false"><span class="ti-user"></span></a>
 								<ul class="dropdown-menu">
-									<li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Profile</a></li>
+									<li class="nav-item"><a class="nav-link" href="{% url 'user_profile' %}">Profile</a></li>
 									<li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Log out</a></li>
 								</ul>
 							</li>
@@ -169,47 +170,73 @@
                             <div class="col-md-12 form-group">
                                 <div class="row">
                                     <div class="col-md-6 form-group p_star">
-                                        <input type="text" class="form-control" id="first" name="fname" placeholder="First Name">
+                                        <input type="text" class="form-control" id="first" name="fname"
+                                            value="{{ active_address.fname }}" placeholder="First Name">
+                                        {% if address_form.fname.errors %}
+                                            <p class="text-danger">{{ address_form.fname.errors.0 }}</p>
+                                        {% endif %}
                                     </div>
                                     <div class="col-md-6 form-group p_star">
-                                        <input type="text" class="form-control" id="last" name="lname" placeholder="Last Name">
+                                        <input type="text" class="form-control" id="last" name="lname"
+                                            value="{{ active_address.lname }}" placeholder="Last Name">
+                                        {% if address_form.lname.errors %}
+                                            <p class="text-danger">{{ address_form.lname.errors.0 }}</p>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
-                            <!-- <div class="col-md-12 form-group">
-                                <input type="text" class="form-control" id="company" name="company" placeholder="Company name">
-                            </div> -->
+
                             <div class="col-md-12 form-group">
                                 <div class="row">
                             <div class="col-md-6 form-group p_star">
-                                <input type="number" class="form-control" id="number" name="phone" placeholder="phone number">
+                                <input type="number" class="form-control" id="number" name="phone"
+                                 value="{{active_address.phone}}" placeholder="phone number">
+                                 {% if address_form.phone.errors %}
+                                    <p class="text-danger">{{ address_form.phone.errors.0 }}</p>
+                                {% endif %}
                             </div>
                             <div class="col-md-6 form-group p_star">
-                                <input type="email" class="form-control" id="email" name="email" placeholder="email">
+                                <input type="email" class="form-control" id="email" name="email"
+                                 value="{{active_address.email}}" placeholder="email">
+                                 {% if address_form.email.errors %}
+                                    <p class="text-danger">{{ address_form.email.errors.0 }}</p>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
 
                             <div class="col-md-12 form-group p_star">
-                                <select class="country_select" name="country">
+                                <select class="country_select" name="country" value="{{active_address.country}}">
                                     <option>India</option>
                                 </select>
                             </div>
                             <div class="col-md-12 form-group p_star">
-                                <input type="text" class="form-control" id="add1" name="address" placeholder="address">
-                            </div>
-                            <!-- <div class="col-md-12 form-group p_star">
-                                <input type="text" class="form-control" id="add2" name="add2">
-                                <span class="placeholder" data-placeholder="Address line 02"></span>
-                            </div> -->
-                            <div class="col-md-12 form-group p_star">
-                                <input type="text" class="form-control" id="city" name="city" placeholder="Town/City">
+                                <input type="text" class="form-control" id="add1" name="address"
+                                 placeholder="address" value="{{active_address.address}}">
+                                 {% if address_form.address.errors %}
+                                    <p class="text-danger">{{ address_form.address.errors.0 }}</p>
+                                {% endif %}
                             </div>
                             <div class="col-md-12 form-group p_star">
-                                <input type="text" class="form-control" id="state" name="state" placeholder="State">
+                                <input type="text" class="form-control" id="city" name="city"
+                                 placeholder="Town/City" value="{{active_address.city}}">
+                                 {% if address_form.city.errors %}
+                                    <p class="text-danger">{{ address_form.city.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                <input type="text" class="form-control" id="state" name="state"
+                                 placeholder="State" value="{{active_address.state}}">
+                                 {% if address_form.state.errors %}
+                                    <p class="text-danger">{{ address_form.state.errors.0 }}</p>
+                                {% endif %}
                             </div>
                             <div class="col-md-12 form-group">
-                                <input type="number" class="form-control" id="zip" name="pincode" placeholder="Pincode/ZIP">
+                                <input type="number" class="form-control" id="zip" name="pincode"
+                                 placeholder="Pincode/ZIP" value="{{active_address.pincode}}">
+                                 {% if address_form.zip.errors %}
+                                    <p class="text-danger">{{ address_form.zip.errors.0 }}</p>
+                                {% endif %}
                             </div>
                             <!-- <div class="col-md-12 form-group">
                                 <div class="creat_account">

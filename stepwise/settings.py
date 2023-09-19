@@ -64,7 +64,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    'accounts.middleware.RestrictAdminUserInFrontendMiddleware',
+    # 'accounts.middleware.RestrictAdminUserInFrontendMiddleware',
 ]
 
 ROOT_URLCONF = "stepwise.urls"
@@ -133,6 +133,11 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
+
+#the place to store the translations
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale')
+]
 
 
 # Static files (CSS, JavaScript, Images)
