@@ -1,9 +1,13 @@
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from . models import ProductItem, Brand, Category, Size
 from django.template.loader import render_to_string
+from django.core.paginator import Paginator
 
-from django.db.models import Count
+from . models import Product_Review
+from .forms import ProductReviewForm
+
+from django.db.models import Count,Avg
 
 
 
@@ -37,23 +41,46 @@ def index(request):
         # 'user': user
     }
 
+
+
     return render(request, "index.html", context)
 
 def productList(request):
 
     #try to add select to fetch data from other tables(foriegn key)
-    unique_products = ProductItem.objects.order_by('product_id', 'brand_id', 'id').distinct('product_id', 'brand_id')
+    # unique_products = ProductItem.objects.order_by('product_id', 'brand_id', 'id').distinct('product_id', 'brand_id')
+    unique_products = ProductItem.objects.distinct('product_id', 'brand_id')
+
+   # Set the default sorting order
+    default_sort = 'price_low'
+
+    # Retrieving the selected sorting field from the URL
+    sort_items = request.GET.get('sort', default_sort)
+
+    # Query your products based on your needs
+    if sort_items == 'price_low':
+        products = ProductItem.objects.all().order_by('price')
+    elif sort_items == 'price_high':
+        products = ProductItem.objects.all().order_by('-price')
+    else:
+        products = ProductItem.objects.all()
+        
 
 
-    # colors = ProductItem.objects.values_list('color_id__color_value', flat=True).distinct()
+    # Initialize paginator
+    paginator = Paginator(unique_products, 3)  # 12 products per page
 
-    # brand = ProductItem.objects.values_list('brand_id__brand_name', flat=True).distinct()
+    # Get the current page number from the request's GET parameters
+    page_number = request.GET.get('page')
 
-    # category = ProductItem.objects.values_list('category_id__name', flat=True).distinct()
+    # Get the Page object for the current page
+    page = paginator.get_page(page_number)
 
 
     context = {
-        'products': unique_products,
+        # 'products': unique_products,
+        'page': page,
+        'products': products,
     }
     return render(request, "category.html", context)
 
@@ -61,11 +88,65 @@ def productList(request):
 def productDetail(request, slug):
 
     products = get_object_or_404(ProductItem, slug=slug)
+
+    #Getting reviews related to a product
+    reviews = Product_Review.objects.filter(product=products).order_by("-date")
+
+    #getting average reviews
+    average_rating = Product_Review.objects.filter(product=products).aggregate(rating=Avg('rating'))
+
+    #product review form
+    review_form = ProductReviewForm()
+
+
+    #making user to give one review only for a product
+    make_review = True
+
+    if request.user.is_authenticated:
+        user_review_count = Product_Review.objects.filter(user=request.user, product=products).count()
+
+        if user_review_count > 0:
+            make_review = False
+
     context = {
         'product': products,
+        'reviews': reviews,
+        'make_review': make_review,
+        'average_rating': average_rating,
+        'review_form': review_form,
     }
 
     return render(request, "single-product.html", context)
+
+
+def ajax_add_review(request, id):
+    product = ProductItem.objects.get(id=id)
+    user = request.user
+
+    review = Product_Review.objects.create(
+        user=user,
+        product=product,
+        review = request.POST['review'],
+        rating = request.POST['rating'],
+
+    )
+
+    context = {
+        'user': user.username,
+        'review': request.POST['review'],
+        'rating': request.POST['rating'],
+    }
+
+    average_review = Product_Review.objects.filter(product=product).aggregate(rating=Avg("rating"))
+
+    return JsonResponse(
+        {
+        'bool': True,
+        'context': context,
+        'average_review': average_review,
+        }
+    )
+
 
 
 def filter_product(request):

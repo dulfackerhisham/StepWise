@@ -2,13 +2,21 @@ from django.db import models
 from django.utils import timezone
 
 from django.utils.text import slugify
-
+from accounts.models import Account
 # Create your models here.
 
 gender_choices = (
         ('M', 'Men'),
         ('F', 'Women'),
     )
+
+RATING = (
+    (1, "⭐☆☆☆☆"),
+    (2, "⭐⭐☆☆☆"),
+    (3, "⭐⭐⭐☆☆"),
+    (4, "⭐⭐⭐⭐☆"),
+    (5, "⭐⭐⭐⭐⭐"),
+)
 
 
 class Product(models.Model):
@@ -110,3 +118,29 @@ class ProductItemGallery(models.Model):
 
     def __str__(self):
         return f'{self.image}'
+    
+
+class Coupon_code(models.Model):
+    code = models.CharField(max_length=150)
+    discount = models.IntegerField()
+    active = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.code
+    
+
+class Product_Review(models.Model):
+    user = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True)
+    product = models.ForeignKey(ProductItem, on_delete=models.SET_NULL, null=True, related_name="reviews")
+    review = models.TextField()
+    rating = models.IntegerField(choices=RATING, default=None)
+    date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Product Reviews"
+
+    def __str__(self):
+        return self.product.product_id.title
+    
+    def get_rating(self):
+        return self.rating

@@ -2,6 +2,7 @@ from django.db import models
 from accounts.models import Account
 from products.models import ProductItem
 from accounts.models import Profile
+from products.models import Coupon_code
 
 
 # Create your models here.
@@ -24,11 +25,13 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    applied_coupon = models.ForeignKey(Coupon_code, on_delete=models.SET_NULL, null=True,blank=True)
+
 
     def __str__(self):
         return f"{self.id} {self.tracking_no}"
     
-    def save(self, *args, **kwargs):
+    def calculate_total_price(self):
         """
         calculating the total_price of all product with the quantity respectively from cart model
         """
@@ -36,7 +39,18 @@ class Order(models.Model):
         for cart_item in self.user.cart_set.all():
             total_price += cart_item.product.price * cart_item.qty
 
-        self.total_price = total_price
+        if self.applied_coupon:
+            total_price -= (total_price * self.applied_coupon.discount / 100)
+        return total_price
+    
+    def save(self, *args, **kwargs):
+        """
+        Set the total_price before saving the order.
+
+        """
+
+
+        self.total_price = self.calculate_total_price()
         super(Order, self).save(*args, **kwargs)
     
     

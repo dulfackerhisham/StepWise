@@ -1,5 +1,5 @@
 {% extends 'index.html' %}
-{% load static i18n %}
+{% load static %}
 
 
 
@@ -68,7 +68,7 @@
 							</li>
 						</ul>
 						<ul class="nav navbar-nav navbar-right">
-							<li class="nav-item nav-link"><a href="#" class="cart"><span class="ti-bag"></span></a></li>
+							<li class="nav-item nav-link"><a href="{% url 'cart' %}" class="cart"><span class="ti-bag"></span></a></li>
 							<li class="nav-item nav-link">
 								<button class="search "><span class="lnr lnr-magnifier" id="search"></span></button>
 							</li>
@@ -124,11 +124,25 @@
             </div>
         </div>
     </section>
+    <!-- {% if messages %}
+	{% for message in messages %}
+		<div class="alert text-danger alert-{{message.tags}}" role="alert">
+			{{ message }}
+		</div>
+	{% endfor %}
+	{% endif %} -->
     <!-- End Banner Area -->
 
     <!--================Checkout Area =================-->
     <section class="checkout_area section_gap">
         <div class="container">
+            {% if messages %}
+            {% for message in messages %}
+                <div class="alert text-danger alert-{{message.tags}}" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            {% endif %}
             <!-- <div class="returning_customer">
                 <div class="check_title">
                     <h2>Returning Customer? <a href="#">Click here to login</a></h2>
@@ -162,6 +176,22 @@
                 <a class="tp_btn" href="#">Apply Coupon</a>
             </div> -->
         <form action="{% url 'placeorder' %}" method="POST">
+            {% if valid_coupon %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>{{applied_coupon.code}}</strong>&nbsp;{{valid_coupon}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            {% elif invalid_coupon%}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{invalid_coupon}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+
+            {% endif %} 
             {% csrf_token %}
             <div class="billing_details">
                 <div class="row">
@@ -244,18 +274,25 @@
                                     <label for="f-option2">Create an account?</label>
                                 </div>
                             </div> -->
-                            <div class="col-md-12 form-group">
+                            <!-- <div class="col-md-12 form-group">
                                 <div class="creat_account">
                                     <h3>Shipping Details</h3>
                                     <input type="checkbox" id="f-option3" name="selector">
                                     <label for="f-option3">Ship to a different address?</label>
                                 </div>
                                 <textarea class="form-control" name="message" id="message" rows="1" placeholder="Order Notes"></textarea>
-                            </div>
+                            </div> -->
                         </form>
                     </div>
+
                     <div class="col-lg-4">
-                        <div class="order_box">
+                    <form action="{% url 'apply_coupon' %}" method="get">
+                    <div class="cupon_text align-items-center">
+                        <input id="coupon_code" type="text" placeholder="Coupon Code" name="coupon_code">
+                        <button class="primary-btn" type="submit">Apply Coupon</button>
+                    </div>
+                    </form>
+                        <div class="order_box mt-4">
                             <h2>Your Order</h2>
                             {% if cart %}
 
@@ -271,27 +308,17 @@
                             <ul class="list list_2">
                                 <!-- <li><a href="#">Subtotal <span>Rs{{subtotal}}</span></a></li> -->
                                 <li><a href="#">Shipping <span>Free</span></a></li>
-                                <li><a href="#">Total <span>Rs{{subtotal}}</span></a></li>
+                                {% if valid_coupon %}
+                                <li><a href="">Coupon Code Applied <span>{{applied_coupon.code}}</span></a></li>
+                                <li><a href="">discount <span>{{applied_coupon.discount}}%</span></a></li>
+                                <li><a href="#">Total <span>Rs {{updated_total}}</span></a></li>
+                                {% else %}
+                                <li><a href="#">Total <span>Rs {{subtotal}}</span></a></li>
+                                {% endif %}
+
+
                             </ul>
-                            <!-- <div class="payment_item">
-                                <div class="radion_btn">
-                                    <input type="radio" id="f-option5" name="selector">
-                                    <label for="f-option5">Check payments</label>
-                                    <div class="check"></div>
-                                </div>
-                                <p>Please send a check to Store Name, Store Street, Store Town, Store State / County,
-                                    Store Postcode.</p>
-                            </div> -->
-                            <!-- <div class="payment_item active">
-                                <div class="radion_btn">
-                                    <input type="radio" id="f-option6" name="selector">
-                                    <label for="f-option6">Paypal </label>
-                                    <img src="{% static 'img/product/card.jpg' %}" alt="">
-                                    <div class="check"></div>
-                                </div>
-                                <p>Pay via PayPal; you can pay with your credit card if you don’t have a PayPal
-                                    account.</p>
-                            </div> -->
+
                             <input type="hidden" value="COD" name="payment_mode">
                             <button type="submit" class="btn primary-btn w-100 mt-3" style="border: none;"> COD | Place Order </button>
                             <button type="button" class="btn btn-primary payWithRazorpay w-100 mt-2" style="border: none;"> Pay with Razorpay </button>

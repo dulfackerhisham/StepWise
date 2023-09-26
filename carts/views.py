@@ -5,6 +5,8 @@ from . models import Cart
 from products.models import ProductItem
 from django.contrib.auth.decorators import login_required
 
+from products.models import Coupon_code
+
 # Create your views here.
 
 def addtocart(request):
@@ -53,8 +55,26 @@ def viewcart(request):
         item.total_price = item.product.price * item.qty
         subtotal += item.total_price
 
+    #Coupon code
+    coupon = None
+    valid_coupon = None
+    invalid_coupon = None
+
+    if request.method == "GET":
+        coupon_code = request.GET.get('coupon_code')
+        if coupon_code:
+            try:
+                coupon = Coupon_code.objects.get(code=coupon_code)
+                valid_coupon = "Are Applicable on Current Order !"
+            except:
+                invalid_coupon = "Invalid Coupon Code !"
+
+
     context = {'cart': cart,
                'subtotal': subtotal,
+               'coupon': coupon,
+               'valid_coupon': valid_coupon,
+               'invalid_coupon': invalid_coupon,
                }
 
     return render(request, "cart.html", context)
@@ -101,3 +121,5 @@ def deletecart(request):
         else:
             return JsonResponse({'status': "Product not Removed From Cart"})
     return redirect('/')
+
+

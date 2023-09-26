@@ -11,6 +11,9 @@ class ProductItemAdmin(admin.ModelAdmin):
     list_display = ['product_id', 'category_id', 'gender', 'size_id', 'color_id', 'price']
     readonly_fields = ['createdDate', 'modifiedDate', 'slug']
 
+class ProductReviewAdmin(admin.ModelAdmin):
+    list_display = ['user', 'product', 'review', 'rating']
+
     # def delete_model(self, request, obj):
     #     # Check if there are related images in the ProductItemGallery
     #     if obj.productitemgallery_set.exists():
@@ -28,5 +31,7 @@ admin.site.register(Brand)
 # admin.site.register(Gender)
 admin.site.register(ProductItem, ProductItemAdmin)
 admin.site.register(ProductItemGallery)
+admin.site.register(Coupon_code)
+admin.site.register(Product_Review, ProductReviewAdmin)
 
 

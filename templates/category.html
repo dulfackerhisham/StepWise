@@ -1,5 +1,5 @@
 {% extends 'index.html' %}
-{% load static i18n %}
+{% load static %}
 
 
 {% block head %}
@@ -41,7 +41,7 @@
 
 	}
 
-	#max_price{
+	#max_price {
 		border-radius: 1px;
 	}
 </style>
@@ -139,7 +139,6 @@
 	
 	{% block main %}
 
-	{% for post in posts %}
 		
 		
 	<!-- Start Banner Area -->
@@ -221,38 +220,42 @@
 						</div>
 							<div class="custom-checkbox">
 							<button type="button" style="margin-top: 20px; background-color: #ff6c00; color: white;" class="btn mt-20 w-100" id="filertBtn">Filter</button>
-
 							</div>		
 					</div>
 
 				</div>
 			</div>
-			<div class="col-xl-9 col-lg-8 col-md-7">
+			<div class="col-xl-9 col-lg-4 col-md-7">
 				<!-- Start Filter Bar -->
 				<div class="filter-bar d-flex flex-wrap align-items-center">
 					<div class="sorting">
-						<select>
-							<option value="1">Default sorting</option>
-							<option value="1">Default sorting</option>
-							<option value="1">Default sorting</option>
+						<form action="" method="get">
+						<select id="sort-select" name="sort">
+							<option value="price_low">Price Low-to-High</option>
+							<option value="price_high">Price High-to-Low</option>
 						</select>
+						<button onclick="sortProducts(event)" style="margin-left: 50px;">Sort</button>
+
+
+						</form>
 					</div>
 					<div class="sorting mr-auto">
-						<select>
+						<!-- <select>
 							<option value="1">Show 12</option>
 							<option value="1">Show 12</option>
 							<option value="1">Show 12</option>
-						</select>
+						</select> -->
 					</div>
-					<div class="pagination">
-						<a href="#" class="prev-arrow"><i class="fa fa-long-arrow-left" aria-hidden="true"></i></a>
-						<a href="#" class="active">1</a>
-						<a href="#">2</a>
-						<a href="#">3</a>
-						<a href="#" class="dot-dot"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a>
-						<a href="#">6</a>
-						<a href="#" class="next-arrow"><i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
-					</div>
+					<nav aria-label="Page navigation example">
+						<ul class="pagination justify-content-center">
+						  <li class="page-link" style="cursor: pointer; color: #d46618;" {% if page.has_previous %} onclick="pagination('{{ page.previous_page_number }}')"{% endif %}>&laquo;</li>
+						  {% for num in page.paginator.page_range %}
+							<li class="page-link {% if num == page.number %}active{% endif %}" style="cursor: pointer; color: #d46618;" onclick="pagination('{{ num }}')">
+							{{ num }}</li>
+						  {% endfor %}
+						  <li class="page-link" style="cursor: pointer; color: #d46618;" {% if page.has_next %} onclick="pagination('{{ page.next_page_number }}')" {% endif %}>&raquo;</li>    
+						</ul>
+					  </nav>
 				</div>
 				<!-- End Filter Bar -->
 				<!-- Start Best Seller -->
@@ -261,7 +264,7 @@
 						<!-- single product -->
 						<div class="container">
 							<div class="row" id="filtered-product">
-								{% for p in products %}
+								{% for p in page %}
 								<div class="col-lg-4 col-md-4 col-sm-6">
 									<div class="single-product">
 										<a href="{% url 'productDetail' p.slug %}"><img class="img-fluid" style="width: 200px; height: 110px; margin-top: 10px;" src="{{p.img.url}}" alt=""></a>
@@ -275,11 +278,11 @@
 												{% csrf_token %}
 												<input type="hidden" value="{{ p.id }}" class="product-id">
 												<input type="hidden" id="sst" value="1">
-												<a href="#" class="social-info" >
-													<span class="ti-bag" id="add-to-cart-btn"></span>
+												<a href="" class="social-info add-cart">
+													<span class="ti-bag"></span>
 													<p class="hover-text">add to bag</p>
 												</a>
-												<a class="social-info">
+												<a href="#" class="social-info add-wishlist">
 													<span class="lnr lnr-heart"></span>
 													<p class="hover-text">Wishlist</p>
 												</a>
@@ -293,27 +296,7 @@
 						
 						
 				</section>
-				<!-- End Best Seller -->
-				<!-- Start Filter Bar -->
-				<div class="filter-bar d-flex flex-wrap align-items-center" style="margin-bottom: 150px;">
-					<div class="sorting mr-auto">
-						<select>
-							<option value="1">Show 12</option>
-							<option value="1">Show 12</option>
-							<option value="1">Show 12</option>
-						</select>
-					</div>
-					<div class="pagination" >
-						<a href="#" class="prev-arrow"><i class="fa fa-long-arrow-left" aria-hidden="true"></i></a>
-						<a href="#" class="active">1</a>
-						<a href="#">2</a>
-						<a href="#">3</a>
-						<a href="#" class="dot-dot"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a>
-						<a href="#">6</a>
-						<a href="#" class="next-arrow"><i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
-					</div>
-				</div>
-				<!-- End Filter Bar -->
+
 			</div>
 		</div>
 	</div>
@@ -323,6 +306,120 @@
 	<script src="{% static 'js/filter.js' %}"></script>
 
 	<script src="{% static 'js/function.js' %}"></script>
+
+
+
+	<script>
+		function pagination(page_number) {
+			const urlParams = new URLSearchParams(window.location.search);
+			urlParams.set('page', page_number);
+			window.location.href = `${window.location.pathname}?${urlParams.toString()}`;
+		}
+	</script>
+
+<script>
+$(document).ready(function () {
+    // Add to cart functionality
+    $(".add-cart").on("click", function (e) {
+        e.preventDefault();
+
+        console.log("Cart function is called");
+
+        let quantity = $("#sst").val();
+        let product_id = $(this).closest(".single-product").find(".product-id").val();
+        var token = $('input[name=csrfmiddlewaretoken]').val();
+
+        console.log("Quantity:", quantity);
+        console.log("Product ID:", product_id);
+
+        $.ajax({
+            type: "POST",
+            url: "/cart/add_to_cart/",
+            data: {
+                'id': product_id,
+                'qty': quantity,
+                csrfmiddlewaretoken: token,
+            },
+            dataType: "json",
+            beforeSend: function() {
+                console.log("Sending request to add to Cart");
+            },
+            success: function(response){
+                console.log(response);
+                alertify.success(response.status);
+                console.log("Added product to Cart");
+            },
+            error: function(xhr, status, error) {
+                console.error("Error adding product to Cart:", error);
+            }
+        });
+    });
+
+    // Add to wishlist functionality
+    $(".add-wishlist").on("click", function (e) {
+        e.preventDefault();
+
+        console.log("Wishlist function is called");
+
+        let product_id = $(this).closest(".single-product").find(".product-id").val();
+        var token = $('input[name=csrfmiddlewaretoken]').val();
+
+        console.log("Product ID:", product_id);
+
+        $.ajax({
+            type: "POST",
+            url: '/wishlist/add_to_wishlist/',
+            data: {
+                'id': product_id,
+                csrfmiddlewaretoken: token,
+            },
+            dataType: "json",
+            beforeSend: function() {
+                console.log("Sending request to add to Wishlist");
+            },
+            success: function(response){
+                console.log(response);
+                alertify.success(response.status);
+                console.log("Added product to Wishlist");
+            },
+            error: function(xhr, status, error) {
+                console.error("Error adding product to Wishlist:", error);
+            }
+        });
+    });
+});
+
+
+</script>
+
+<script>
+function sortProducts(event) {
+    // Prevent the default form submission behavior
+    event.preventDefault();
+
+    // Get the selected sorting option
+    const selectedOption = document.getElementById('sort-select').value;
+
+    // Send an AJAX request to the server to fetch sorted products
+    $.ajax({
+        type: 'GET',
+        url: window.location.pathname,
+        data: { sort: selectedOption },
+        dataType: 'html',
+        success: function (data) {
+            // Replace the current product list with the new sorted products
+            $('#filtered-product').html(data);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error fetching sorted products:', error);
+        }
+    });
+}
+
+
+
+</script>
+	
 
 
 	{% endblock script %}

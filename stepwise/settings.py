@@ -43,6 +43,7 @@ AUTH_USER_MODEL = "accounts.Account"
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -88,6 +89,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "stepwise.wsgi.application"
 
+JAZZMIN_SETTINGS = {
+}
+
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -130,14 +134,15 @@ LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "UTC"
 
+
 USE_I18N = True
 
 USE_TZ = True
 
 #the place to store the translations
-LOCALE_PATHS = [
-    os.path.join(BASE_DIR, 'locale')
-]
+# LOCALE_PATHS = [
+#     os.path.join(BASE_DIR, 'locale')
+# ]
 
 
 # Static files (CSS, JavaScript, Images)
@@ -164,3 +169,9 @@ CACHES = {
         'LOCATION': 'unique-snowflake',
     }
 }
+
+
+#CELERY SETTINGS
+
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
