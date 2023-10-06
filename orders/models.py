@@ -3,6 +3,7 @@ from accounts.models import Account
 from products.models import ProductItem
 from accounts.models import Profile
 from products.models import Coupon_code
+from django.db.models import Sum, F
 
 
 # Create your models here.
@@ -19,7 +20,6 @@ class Order(models.Model):
         ('completed', 'completed'),
     }
     status = models.CharField(max_length=150, choices=orderstatus, default='Pending')
-    message = models.TextField(null=True)
     tracking_no = models.CharField(max_length=250, null=True, unique=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -35,9 +35,16 @@ class Order(models.Model):
         """
         calculating the total_price of all product with the quantity respectively from cart model
         """
-        total_price = 0
-        for cart_item in self.user.cart_set.all():
-            total_price += cart_item.product.price * cart_item.qty
+        #TODO remove for loop and use aggregriate method !DONE!
+
+        total_price = self.user.cart_set.aggregate(
+        # F for getting value of appropriate fields
+            total_price=Sum(F('product__price') * F('qty'), output_field=models.FloatField())
+        )['total_price'] or 0.0
+
+        # total_price = 0
+        # for cart_item in self.user.cart_set.all():
+        #     total_price += cart_item.product.price * cart_item.qty
 
         if self.applied_coupon:
             total_price -= (total_price * self.applied_coupon.discount / 100)

@@ -341,7 +341,7 @@
 
 					<div class="col-lg-6 mt-5">
 						{% if request.user.is_authenticated %}
-						{% if make_review %}
+						{% if make_review and user_has_bought %}
 
 						<div class="review_box">
 							<h4 class="add-review">Add a Review</h4>

@@ -17,7 +17,7 @@ import random
 
 # Create your views here.
 
-# TODO: transaction.atomic !Done!
+#transaction.atomic !Done!
 @login_required(login_url='logIn')
 def place_order(request):
     """
@@ -39,7 +39,7 @@ def place_order(request):
                 neworder.payment_mode = request.POST.get('payment_mode')
                 neworder.payment_id = request.POST.get('payment_id')
 
-                # TODO: FORM VALIDATION done !Done!
+                #FORM VALIDATION done !Done!
                 # Check if a Profile for the user exists, and create/update it
                 address, created = Profile.objects.get_or_create(user=request.user, status=True)
 
@@ -56,13 +56,17 @@ def place_order(request):
                 address.save()
 
                 #set the applied coupon code in the order
-                applied_coupon_code = request.session.get('applied_coupon')
+                applied_coupon_code = request.session.get('applied_coupon', None)
+                print(f"Applied Coupon Code: {applied_coupon_code}")
                 if applied_coupon_code:
                     try:
                         coupon = Coupon_code.objects.get(code=applied_coupon_code, active=True)
+                        print(f"Coupon Status: {coupon.active}")
                         neworder.applied_coupon = coupon
+                        print("Coupon Applied to Order")
                     except Coupon_code.DoesNotExist:
                         neworder.applied_coupon = None
+                        print("Coupon Not Found")
 
                 neworder.address = address
 
@@ -71,7 +75,6 @@ def place_order(request):
                 # # TODO : remove for loop move to DB !Done!
 
 
-                # TODO: separate this in another function without use of while loop !Done!
 
                 tracking_number = genearate_tracking_number(request.user)
                 neworder.tracking_no = tracking_number
@@ -109,6 +112,9 @@ def place_order(request):
             if 'applied_coupon' in request.session:
                 del request.session['applied_coupon']
 
+            # Clear the list of applied coupons in the session
+            request.session['applied_coupons'] = []
+
 
             # Use a database transaction for the bulk create operation
             OrderItem.objects.bulk_create(order_items)
@@ -122,18 +128,20 @@ def place_order(request):
             if (pay_mode == PAYMENT_TYPE_RAZORPAY):
                 # TODO: translation languages
                 send_email_task.delay(request.user.id,  neworder.id)
-                return redirect("/")
+                # return redirect("payment-confirmation")
 
             else:
                 send_email_task.delay(request.user.id,  neworder.id)
                 messages.success(request, "Your Order has been placed successfully")
-                return redirect("/")
+                return redirect("payment-confirmation")
 
         
         else:
             return JsonResponse({'error': 'Form validation failed. Return back to checkout Page'})
 
     # return render(request, "confirmation.html")
+
+    #TODO admin actions on ordered items
 
 
 
@@ -160,5 +168,24 @@ def genearate_tracking_number(user):
 
 
 def payment_confirmation(request):
+    """retrieving a users latest order details"""
 
-    return render(request, "confirmation.html")
+    latest_order = Order.objects.filter(user=request.user).order_by('-created_at').first()
+
+    if latest_order:
+        order_items = OrderItem.objects.filter(order=latest_order)
+        address = Profile.objects.filter(user=request.user, status=True)
+
+        context = {
+            'order': latest_order,
+            'order_items': order_items,
+            'address': address,
+        }
+        return render(request, "confirmation.html", context)
+    else:
+        messages.error(request, "No order found")
+        return redirect('/')
+
+#digital ocean,AWS
+#gitignore, readme
+

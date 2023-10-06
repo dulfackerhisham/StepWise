@@ -13,7 +13,7 @@ def apply_coupon(request):
         print("apply_coupon function is called")
         print(coupon_code)
 
-        #get a list of applied coupon
+        # Get a list of applied coupons
         applied_coupons = request.session.get('applied_coupons', [])
 
         if coupon_code in applied_coupons:
@@ -26,23 +26,22 @@ def apply_coupon(request):
                 coupon = Coupon_code.objects.get(code=coupon_code, active=True)
 
                 if coupon:
-
                     # If a valid coupon is found, store it in the session
                     request.session['applied_coupon'] = coupon_code
 
-                    #add the coupon code to the list of applied coupons
+                    # Add the coupon code to the list of applied coupons
                     applied_coupons.append(coupon_code)
                     request.session['applied_coupons'] = applied_coupons
+
                     return redirect('checkout')
 
             except Coupon_code.DoesNotExist:
-                print("coupon does not exist")
+                print("Coupon does not exist")
                 messages.error(request, "Invalid Coupon")
                 return redirect('checkout')
 
     # Handle other HTTP methods as needed
     return redirect('checkout')
-
 
 
 

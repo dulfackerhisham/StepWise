@@ -8,6 +8,7 @@ from . models import Product_Review
 from .forms import ProductReviewForm
 
 from django.db.models import Count,Avg
+from orders.models import OrderItem
 
 
 
@@ -98,6 +99,17 @@ def productDetail(request, slug):
     #product review form
     review_form = ProductReviewForm()
 
+    #checking if the user has bought the product
+    user_has_bought = False
+
+    if request.user.is_authenticated:
+        #checking if there is an order for the current user and product
+        user_order = OrderItem.objects.filter(order__user=request.user, product=products)
+
+        if user_order.exists():
+            user_has_bought = True
+
+
 
     #making user to give one review only for a product
     make_review = True
@@ -114,6 +126,7 @@ def productDetail(request, slug):
         'make_review': make_review,
         'average_rating': average_rating,
         'review_form': review_form,
+        'user_has_bought': user_has_bought,
     }
 
     return render(request, "single-product.html", context)

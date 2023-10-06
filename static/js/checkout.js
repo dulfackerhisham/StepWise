@@ -63,7 +63,7 @@ $(document).ready(function () {
 
 
                                     swal("Confratulations", responsec.status, "success").then((value) => {
-                                        window.location.href = '/place-order/my-orders/'
+                                        window.location.href = '/place-order/payment-confirmation/'
                                     });
                                     
                                 }

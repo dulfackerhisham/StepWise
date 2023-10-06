@@ -139,7 +139,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-#the place to store the translations
+# the place to store the translations
 # LOCALE_PATHS = [
 #     os.path.join(BASE_DIR, 'locale')
 # ]

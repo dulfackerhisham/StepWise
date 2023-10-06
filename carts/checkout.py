@@ -38,6 +38,7 @@ def checkout_view(request):
             applied_coupon = Coupon_code.objects.get(code=applied_coupon_code, active=True)
             coupon_discount = applied_coupon.discount
         except Coupon_code.DoesNotExist:
+            # applied_coupon = None
             invalid_coupon = "Invalid Coupon Code !"
             applied_coupon_code = None 
 
