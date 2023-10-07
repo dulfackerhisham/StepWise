@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 def apply_coupon(request):
     if request.method == 'GET':
         coupon_code = request.GET.get("coupon_code")
-        print("apply_coupon function is called")
+        # print("apply_coupon function is called")
         print(coupon_code)
 
         # Get a list of applied coupons
@@ -18,7 +18,7 @@ def apply_coupon(request):
 
         if coupon_code in applied_coupons:
             # If the coupon code is in the list of applied coupons, show an error message
-            print("Coupon has already been used")
+            # print("Coupon has already been used")
             messages.error(request, "Coupon code has already been used")
         else:
             try:
@@ -36,7 +36,7 @@ def apply_coupon(request):
                     return redirect('checkout')
 
             except Coupon_code.DoesNotExist:
-                print("Coupon does not exist")
+                # print("Coupon does not exist")
                 messages.error(request, "Invalid Coupon")
                 return redirect('checkout')
 

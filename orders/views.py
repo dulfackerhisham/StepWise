@@ -57,16 +57,16 @@ def place_order(request):
 
                 #set the applied coupon code in the order
                 applied_coupon_code = request.session.get('applied_coupon', None)
-                print(f"Applied Coupon Code: {applied_coupon_code}")
+                # print(f"Applied Coupon Code: {applied_coupon_code}")
                 if applied_coupon_code:
                     try:
                         coupon = Coupon_code.objects.get(code=applied_coupon_code, active=True)
-                        print(f"Coupon Status: {coupon.active}")
+                        # print(f"Coupon Status: {coupon.active}")
                         neworder.applied_coupon = coupon
-                        print("Coupon Applied to Order")
+                        # print("Coupon Applied to Order")
                     except Coupon_code.DoesNotExist:
                         neworder.applied_coupon = None
-                        print("Coupon Not Found")
+                        # print("Coupon Not Found")
 
                 neworder.address = address
 
