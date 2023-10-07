@@ -148,9 +148,11 @@
                                     {% csrf_token %}
 
                                     <input type="hidden" class="product-id" value="{{ wish.product.id}}">
+									<input type="hidden" id="sst" value="1">
 
 
-									<a href="{% url 'add_to_cart' %}" class="social-info">
+
+									<a href="" class="social-info add-cart">
 										<span class="ti-bag"></span>
 										<p class="hover-text">Add to bag</p>
 									</a>
@@ -176,6 +178,52 @@
 {% endblock main %}
 
 {% block script %}
+
+<script>
+    $(document).ready(function () {
+
+        // Add to cart functionality
+			$(".add-cart").on("click", function (e) {
+				e.preventDefault();
+		
+				console.log("cart function is called");
+		
+		
+				let quantity = $("#sst").val();
+				let product_id = $(this).closest(".single-product").find(".product-id").val(); // Retrieve product ID using .closest() and .find()
+				var token = $('input[name=csrfmiddlewaretoken]').val();
+		
+				console.log("quantity:", quantity);
+				console.log("product id:", product_id);
+		
+				$.ajax({
+					type: "POST",
+					url: "/cart/add_to_cart/",
+					data: {
+						'id': product_id,
+						'qty': quantity,
+						// 'title': product_title,
+						// 'price': product_price,
+						csrfmiddlewaretoken: token,
+					},
+					dataType: "json",
+					beforeSend: function() {
+						console.log("Adding product to Cart");
+					},
+					success: function(response){
+						console.log(response)
+						alertify.success(response.status)
+						// window.alert(response.status)
+						console.log("Added product to Cart");
+					}
+				})
+			});
+
+	});
+
+</script>
+
+
 
 <script src="{% static 'js/function.js' %}"></script>
 
