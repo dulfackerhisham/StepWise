@@ -98,16 +98,14 @@ class ProductItem(models.Model):
     modifiedDate    = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{self.gender} - {self.brand_id} {self.product_id} {self.color_id} - Size: {self.size_id}'
+        return str(self.gender)
 
     
     def save(self, *args, **kwargs):
         # generate slug field from name field if slug is empty
         # Concatenate fields to create the slug
-        print(self.slug)
         if not self.slug:
             self.slug = slugify(f'{self.brand_id.brand_name} {self.product_id.title} {self.gender} {self.size_id.size_value} {self.color_id.color_value}')
-            print('hjkhfdfd', self.slug)
         super(ProductItem, self).save(*args, **kwargs)
         
    

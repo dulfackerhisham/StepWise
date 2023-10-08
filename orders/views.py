@@ -128,6 +128,7 @@ def place_order(request):
             if (pay_mode == PAYMENT_TYPE_RAZORPAY):
                 # TODO: translation languages
                 send_email_task.delay(request.user.id,  neworder.id)
+                print(f"worked {send_email_task} ")
                 # return redirect("payment-confirmation")
 
             else:

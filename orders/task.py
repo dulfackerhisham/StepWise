@@ -14,6 +14,8 @@ def send_email_task(user_id, order_id):
     !!!sending Order Confirmation Mail!!!
     """
 
+    print("send email task called")
+
     user = Account.objects.get(id=user_id)
     order = Order.objects.get(id=order_id)
 
@@ -33,4 +35,6 @@ def send_email_task(user_id, order_id):
     The StepWise Team'''
     to_list = [user.email]
     send_mail(subject, message, settings.EMAIL_HOST_USER, to_list, fail_silently=False)
+    print("executed")
+
 
