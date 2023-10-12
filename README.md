@@ -52,7 +52,7 @@ Follow these steps to explore StepWise:
 3. Clone the repository:
  `https://github.com/dulfackerhisham/StepWise.git`
 4. Navigate to the project directory:
-  cd StepWise
+  'cd StepWise'
 5. Install dependencies: `pip install -r requirements.txt`
 
 
