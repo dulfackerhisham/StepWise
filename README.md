@@ -42,3 +42,18 @@ StepWise goes beyond the ordinary with a range of standout features:
 - **Streamlined Checkout:** Effortlessly complete your purchase with a user-friendly checkout process.
 - **Coupons:** Enjoy extra savings with coupons.
 - **Image Cropping and Zooming:** Get a closer look at our products with advanced image cropping and zooming.
+
+  ## Get Started
+
+Follow these steps to explore StepWise:
+
+1. Open your terminal or command prompt.
+2. Navigate to your desired directory using `cd`.
+3. Clone the repository: `https://github.com/dulfackerhisham/StepWise.git`
+4. Navigate to the project directory: `cd StepWise`
+5. Install dependencies: `pip install -r requirements.txt`
+
+
+## Authors
+
+- Hisham Dulfacker - WEB DEVELOPER - [Your GitHub Profile](https://github.com/dulfackerhisham)
