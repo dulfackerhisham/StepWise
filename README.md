@@ -32,3 +32,13 @@ StepWise harnesses a powerful stack of technologies to deliver a cutting-edge E-
 - **Unicorn:** A high-performance HTTP server for deployment, contributing to the website's speed and reliability.
 - **Nginx:** Powering our deployment with NGINX to optimize performance and handle incoming traffic efficiently.
 - **AWS:** Hosted on AWS EC2 for scalability and availability.
+
+## E-Commerce Features
+
+StepWise goes beyond the ordinary with a range of standout features:
+
+- **Efficient Cart Management:** Seamlessly keep track of purchases.
+- **Wishlist:** Create and manage your wishlist for future purchases.
+- **Streamlined Checkout:** Effortlessly complete your purchase with a user-friendly checkout process.
+- **Coupons:** Enjoy extra savings with coupons.
+- **Image Cropping and Zooming:** Get a closer look at our products with advanced image cropping and zooming.
