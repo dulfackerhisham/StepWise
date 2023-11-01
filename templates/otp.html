@@ -35,8 +35,8 @@
                 <!-- <input type="submit" class="btn btn-success" value="Submit"> -->
                 <p id="countDown" style="text-align: center; font-size: smaller;" aria-live="polite"></p>
                
-                <a href="{% url 'resend_otp' %}" id="unhide" style="text-decoration: none;">
-                    <button style="background-color:#ff6c00; border: none; border-radius: 2ch;">Resend OTP</button>
+                <a href="{% url 'resend_otp' key %}" id="unhide" class="btn" style="text-decoration: none;">
+                    Resend OTP
                     </a>
 
                 <!-- Call JavaScript function submitFormWithOTP() when the button is clicked -->

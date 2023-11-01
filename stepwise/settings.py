@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG') == 'TRUE'
+DEBUG = os.environ.get('DEBUG') == 'True'
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -68,7 +68,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # 'accounts.middleware.RestrictAdminUserInFrontendMiddleware',
+    'accounts.middleware.RestrictAdminUserInFrontendMiddleware',
 ]
 
 ROOT_URLCONF = "stepwise.urls"

@@ -30,8 +30,8 @@ $(document).ready(function () {
                     console.log("1 called")
                     var options = {
                         "key": "rzp_test_lyedGmf18EiO4x", // Enter the Key ID generated from the Dashboard
-                        // "amount": response.subtotal * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-                        "amount": 1 * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                        "amount": response.subtotal * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                        // "amount": 1 * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
                         "currency": "INR",
                         "name": "StepWise", //your business name
                         "description": "Thank you for buying from us",
@@ -62,8 +62,8 @@ $(document).ready(function () {
                                     console.log("2 called")
 
 
-                                    swal("Confratulations", responsec.status, "success").then((value) => {
-                                        window.location.href = '/place-order/payment-confirmation/'
+                                    swal("Congratulations", "your order has been placed successfully", "success").then((value) => {
+                                        window.location.href = '/place-order/payment-completed/'
                                     });
                                     
                                 }

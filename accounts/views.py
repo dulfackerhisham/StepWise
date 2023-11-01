@@ -64,10 +64,10 @@ def sign_up(request):
                 messages.error(request, "Email already in use! Please try some other email")
                 return render(request, "signup.html")
             else:
-                #generating otp & saves in session
+                #generating otp & saves in cache
                 random_otp = str(random.randint(0000, 9999))
                 key = hashlib.sha3_256(email.encode()).hexdigest()
-                cache.set(key, random_otp, 30)
+                cache.set(key, random_otp, 50)
                 print(random_otp)
                 #sending email
                 subject = "Welcome to StepWise !!!"
@@ -95,7 +95,8 @@ def otp_verification(request, key):
     if request.method == 'POST':
         submitted_otp = request.POST.get('submitted_otp')
         generated_otp = cache.get(key)
-        print(submitted_otp)
+        print(f"submitted otp {submitted_otp}")
+        print(f"generated otp {generated_otp}")
 
         if submitted_otp == generated_otp:
             user = Account.objects.create_user(
@@ -114,23 +115,25 @@ def otp_verification(request, key):
             return redirect('logIn')
         else:
             messages.error(request, "OTP doesn't match or has expired.")
-            return redirect('otp_verification')
+            cache.delete('generated_otp')
+            return redirect(request.META.get('HTTP_REFERER'))
 
 
     # Handle the case where the request method is not POST (GET, etc.)
-    return render(request, "otp.html")
+    return render(request, "otp.html" ,{"key": key})
     
 
 
-def resend_otp(request):
+def resend_otp(request, key):
     if request.method == 'GET':
+        print('resend function called')
         email = request.session.get('email')
         username = request.session.get('username')
 
         # Generating new OTP
         random_otp = str(random.randint(0000, 9999))
-        cache.set('generated_otp', random_otp, 30)
-        print(random_otp)
+        cache.set(key, random_otp, 50)
+        print('resended otp:', random_otp)
 
         # Sending email
         subject = "Resend OTP - StepWise !!!"
@@ -143,7 +146,7 @@ def resend_otp(request):
         messages.success(request, "New OTP has been sent to your email")    
 
     # Redirect the user back to the OTP verification page
-    return redirect('otp_verification')
+    return redirect(request.META.get('HTTP_REFERER'))
 
 
 # @cache_control(no_cache=True, must_revalidate=True, no_store=True)

@@ -129,6 +129,7 @@ def place_order(request):
                 # TODO: translation languages
                 send_email_task.delay(request.user.id,  neworder.id)
                 print(f"worked {send_email_task} ")
+                return JsonResponse({'status': 'Your Order has been placed successfully'})
                 # return redirect("payment-confirmation")
 
             else:
@@ -158,6 +159,19 @@ def razorpay_check(request):
     for item in cart:
         totalprice = item.product.price * item.qty
         subtotal += totalprice
+
+    # Check if a coupon is applied
+    applied_coupon_code = request.session.get('applied_coupon', None)
+
+    if applied_coupon_code:
+        # Try to get the coupon or set discounted_price to subtotal
+        try:
+            coupon = Coupon_code.objects.get(code=applied_coupon_code, active=True)
+            # Apply the coupon discount to the subtotal
+            subtotal -= subtotal * coupon.discount / 100
+        except Coupon_code.DoesNotExist:
+            # If the coupon is not found, ignore it
+            pass
 
     return JsonResponse({'subtotal': subtotal})
 
