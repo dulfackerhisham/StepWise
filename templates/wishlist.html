@@ -58,9 +58,9 @@
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li class="nav-item nav-link"><a href="{% url 'cart' %}" class="cart"><span class="ti-bag"></span></a></li>
-                        <li class="nav-item nav-link">
+                        <!-- <li class="nav-item nav-link">
                             <button class="search "><span class="lnr lnr-magnifier" id="search"></span></button>
-                        </li>
+                        </li> -->
                         {% if user.is_authenticated %}
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
@@ -83,7 +83,7 @@
             </div>
         </nav>
     </div>
-    <div class="search_input" id="search_input_box">
+    <!-- <div class="search_input" id="search_input_box">
         <div class="container">
             <form class="d-flex justify-content-between">
                 <input type="text" class="form-control" id="search_input" placeholder="Search Here">
@@ -91,7 +91,7 @@
                 <span class="lnr lnr-cross" id="close_search" title="Close Search"></span>
             </form>
         </div>
-    </div>
+    </div> -->
 </header>
 {% endblock navbar %}
 
@@ -142,6 +142,9 @@
 								<h6>{{ wish.product.product_id.title }}</h6>
 								<div class="price">
 									<h6>RS {{ wish.product.price }}</h6>
+                                    {% if wish.product.stock == 0 %}
+                                    <h6 style="color: red;">Out of stock</h6>
+                                    {% endif %}
 									<!-- <h6 class="l-through">$210.00</h6> -->
 								</div>
 								<div class="prd-bottom prd-data">
@@ -151,11 +154,14 @@
 									<input type="hidden" id="sst" value="1">
 
 
-
+                                    {% if wish.product.stock == 0 %}
+                                        <p class=></p>
+                                    {% else %}
 									<a href="" class="social-info add-cart">
 										<span class="ti-bag"></span>
 										<p class="hover-text">Add to bag</p>
 									</a>
+                                    {% endif %}
 
 									<a href="#" class="social-info delete-wishlist" data-id="{{ wish.id }}">
 										<span class="ti-trash"></span>

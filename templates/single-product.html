@@ -28,8 +28,8 @@
 		<nav class="navbar navbar-expand-lg navbar-light main_box">
 			<div class="container">
 				<!-- Brand and toggle get grouped for better mobile display -->
-				<a class="navbar-brand logo_h" href="{% url 'home' %}"><img src="{% static 'img/logo.png' %}"
-						alt=""></a>
+				<a class="navbar-brand logo_h" href="{% url 'home' %}"><img style="height: 90px;" src="{% static 'img/log/social.jfif' %}" alt="">
+				</a>
 				<button class="navbar-toggler" type="button" data-toggle="collapse"
 					data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
 					aria-label="Toggle navigation">
@@ -67,9 +67,9 @@
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
 						<li class="nav-item nav-link"><a href="{% url 'cart' %}" class="cart"><span class="ti-bag"></span></a></li>
-						<li class="nav-item nav-link">
+						<!-- <li class="nav-item nav-link">
 							<button class="search "><span class="lnr lnr-magnifier" id="search"></span></button>
-						</li>
+						</li> -->
 						{% if user.is_authenticated %}
 						<li class="nav-item dropdown">
 							<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button"
@@ -92,7 +92,7 @@
 			</div>
 		</nav>
 	</div>
-	<div class="search_input" id="search_input_box">
+	<!-- <div class="search_input" id="search_input_box">
 		<div class="container">
 			<form class="d-flex justify-content-between">
 				<input type="text" class="form-control" id="search_input" placeholder="Search Here">
@@ -100,7 +100,7 @@
 				<span class="lnr lnr-cross" id="close_search" title="Close Search"></span>
 			</form>
 		</div>
-	</div>
+	</div> -->
 </header>
 {% endblock navbar %}
 
@@ -199,6 +199,9 @@
 
 
 					<div class="product_count product_data">
+					{% if product.stock == 0 %}
+						<!-- <p class=>Out of stock</p> -->
+					{% else %}
 						{% csrf_token %}
 						<input type="hidden" value="{{ product.id }}" class="product-id">
 						<input type="hidden" class="max-stock" value="{{ product.stock }}">
@@ -209,13 +212,16 @@
 							class="input-text qty">
 							<button class="increase increment-btn" type="button"><i class="lnr lnr-chevron-up"></i></button>
 							<button class="reduced decrement-btn" type="button"><i class="lnr lnr-chevron-down"></i></button>
+						{% endif %}
 					
 					</div>
 					<div class="card_area d-flex align-items-center">
 						<br>
-
+						{% if product.stock == 0 %}
 						<!-- <a class="primary-btn" href="" id="add-to-cart-btn">Add to Cart</a> -->
+						{% else %}
 						<button type="submit" class="primary-btn add-to-cart-btn" style="border: none;">Add to Cart</button>
+						{% endif %}
 						<!-- <a class="icon_btn" href="#"><i class="lnr lnr lnr-diamond"></i></a> -->
 						<a class="icon_btn add-to-wishlist" href="#"><i class="lnr lnr lnr-heart "></i></a>
 					</div>
