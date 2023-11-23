@@ -73,7 +73,7 @@ def sign_up(request):
                 subject = "Welcome to StepWise !!!"
                 message = (f"""Hello {username}
                            Your otp is generated
-                           {random_otp}""")
+                           {random_otp}""") 
         
                 to_list = [email]
                 send_mail(subject, message, settings.EMAIL_HOST_USER, to_list, fail_silently=False)
