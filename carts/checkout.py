@@ -23,7 +23,7 @@ def checkout_view(request):
     try:
         active_address = Profile.objects.get(user=request.user, status=True)
     except:
-        messages.warning(request, "There are multiple addresses, only one should be Activated.")
+        # messages.warning(request, "There might be multiple addresses, only one should be Activated.")
         active_address = None
 
 
@@ -40,10 +40,13 @@ def checkout_view(request):
         except Coupon_code.DoesNotExist:
             # applied_coupon = None
             invalid_coupon = "Invalid Coupon Code !"
-            applied_coupon_code = None 
+            applied_coupon_code = None
 
     #calculating the total amount after reducing discount
     updated_total = subtotal - (subtotal * coupon_discount / 100)
+
+    #fetch active coupon codes
+    available_coupons = Coupon_code.objects.filter(active=True)
 
     
 
@@ -55,5 +58,6 @@ def checkout_view(request):
         'valid_coupon': valid_coupon,
         'applied_coupon': applied_coupon,
         'invalid_coupon': invalid_coupon,
+        'available_coupons': available_coupons,
     }
     return render(request, "checkout.html", context)

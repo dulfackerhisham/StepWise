@@ -25,20 +25,20 @@ def user_profile(request):
             new_address = Profile.objects.create(user=request.user)
 
             new_address.fname = address_form.cleaned_data['fname']
-            new_address.lname = request.cleaned_data['lname']
-            new_address.phone = request.cleaned_data['phone']
-            new_address.email = request.cleaned_data['email']
-            new_address.country = request.cleaned_data['country']
-            new_address.address = request.cleaned_data['address']
-            new_address.city = request.cleaned_data['city']
-            new_address.state = request.cleaned_data['state']
-            new_address.pincode = request.cleaned_data['pincode']
+            new_address.lname = address_form.cleaned_data['lname']
+            new_address.phone = address_form.cleaned_data['phone']
+            new_address.email = address_form.cleaned_data['email']
+            new_address.country = address_form.cleaned_data['country']
+            new_address.address = address_form.cleaned_data['address']
+            new_address.city = address_form.cleaned_data['city']
+            new_address.state = address_form.cleaned_data['state']
+            new_address.pincode = address_form.cleaned_data['pincode']
             new_address.save()
 
             messages.success(request, "Address Added Successfully")
             return redirect('user_profile')
         else:
-            messages.success(request, "Fill all the fields")
+            # messages.warning(request, "Fill all the fields")
             return redirect('user_profile')
 
     

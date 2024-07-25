@@ -14,6 +14,18 @@
         width: auto;
         height: auto;
 }
+.coupon-list {
+    margin-top: 20px;
+}
+.coupon-item {
+    background-color: #f4f4f4;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    color: #333;
+}
 </style>
 
 
@@ -286,6 +298,15 @@
                     </div>
 
                     <div class="col-lg-4">
+                        <div class="coupon-list">
+                            <h2>Available Coupons</h2>
+                            {% for coupon in available_coupons %}
+                                <div class="coupon-item">
+                                    <strong>Code: {{ coupon.code }}</strong> -> discount of {{ coupon.discount }}%
+                                </div>
+                            {% endfor %}
+                        </div>
+
                     <form action="{% url 'apply_coupon' %}" method="get">
                     <div class="cupon_text align-items-center">
                         <input id="coupon_code" type="text" placeholder="Coupon Code" name="coupon_code">

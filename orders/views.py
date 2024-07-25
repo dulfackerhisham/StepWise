@@ -12,7 +12,7 @@ from django.db import transaction
 
 from products.models import Coupon_code
 #celery
-from .task import send_email_task
+# from .task import send_email_task
 import random
 
 # Create your views here.
@@ -127,13 +127,13 @@ def place_order(request):
             pay_mode = request.POST.get('payment_mode')
             if (pay_mode == PAYMENT_TYPE_RAZORPAY):
                 # TODO: translation languages
-                send_email_task.delay(request.user.id,  neworder.id)
-                print(f"worked {send_email_task} ")
+                # send_email_task.delay(request.user.id,  neworder.id)
+                # print(f"worked {send_email_task} ")
                 return JsonResponse({'status': 'Your Order has been placed successfully'})
                 # return redirect("payment-confirmation")
 
             else:
-                send_email_task.delay(request.user.id,  neworder.id)
+                # send_email_task.delay(request.user.id,  neworder.id)
                 messages.success(request, "Your Order has been placed successfully")
                 return redirect("payment-confirmation")
 
